@@ -7,6 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
+    "husky": "9.1.6",
+    "lint-staged": "15.2.10",
     "@cloudflare/vitest-pool-workers": "0.5.10",
     "@cloudflare/workers-types": "4.20240925.0"
   },
