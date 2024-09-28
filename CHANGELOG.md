@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.3] - 2024-09-28
+
+### 🚀 Features
+
+- *(queue-handler)* Add reactions processing
+
 ## [1.0.0-alpha.2] - 2024-09-28
 
 ### 🚀 Features
