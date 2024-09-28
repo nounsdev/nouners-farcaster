@@ -22,21 +22,23 @@ export async function handleNounsChannel(env: Env) {
   const { items } = await getFeedItems(env, 'nouns', 'unfiltered')
 
   for (const item of items) {
-    if (item.cast.reactions.count > 0) {
-      let nounersLikeCount = 0
+    let nounersLikeCount = 0
 
-      const { likes } = await getCastLikes(env, item.cast.hash)
+    if (item.cast.reactions.count <= 0) {
+      continue
+    }
 
-      for (const like of likes) {
-        if (farcasterUsers.includes(like.reactor.fid)) {
-          nounersLikeCount += 1
-        }
+    const { likes } = await getCastLikes(env, item.cast.hash)
+
+    for (const like of likes) {
+      if (farcasterUsers.includes(like.reactor.fid)) {
+        nounersLikeCount += 1
       }
+    }
 
-      if (nounersLikeCount >= nounersLikeThreshold) {
-        await recast(env, item.cast.hash)
-        await likeCast(env, item.cast.hash)
-      }
+    if (nounersLikeCount >= nounersLikeThreshold) {
+      await recast(env, item.cast.hash)
+      await likeCast(env, item.cast.hash)
     }
   }
 }
