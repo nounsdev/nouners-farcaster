@@ -1,4 +1,4 @@
-# Lil Nouns Farcaster Mods
+# Nouners Farcaster
 
 [![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/nounsdev/nouners-farcaster?include_prereleases)](https://github.com/nounsdev/nouners-farcaster/releases)
 [![GitHub](https://img.shields.io/github/license/nounsdev/nouners-farcaster)](https://github.com/nounsdev/nouners-farcaster/blob/master/LICENSE)
