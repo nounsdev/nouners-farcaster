@@ -76,7 +76,7 @@ interface Result {
 export const fetchFarcasterFeed = async (env: Env): Promise<Result> => {
   const { NEYNAR_API_KEY: apiKey, NEYNAR_API_URL: apiUrl } = env
 
-  let url = `${apiUrl}/v2/farcaster/feed/channels?channel_ids=nouns&with_recasts=true&with_replies=false&limit=100&should_moderate=false`
+  const url = `${apiUrl}/v2/farcaster/feed/channels?channel_ids=nouns&with_recasts=true&with_replies=false&limit=100&should_moderate=false`
   const headers = {
     accept: 'application/json',
     api_key: apiKey,
