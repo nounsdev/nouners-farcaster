@@ -15,8 +15,6 @@ export async function scheduledHandler(
   switch (controller.cron) {
     case CronTime.everyHour():
       await cacheHandler(env)
-      break
-    case CronTime.every(5).minutes():
       await channelHandler(env)
       break
     default:
