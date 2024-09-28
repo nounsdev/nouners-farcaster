@@ -1,7 +1,5 @@
-import {
-  fetchFarcasterCastReactions,
-  fetchFarcasterFeed,
-} from '@/services/neynar'
+import { getCastLikes } from '@/services/warpcast/get-cast-likes'
+import { getFeedItems } from '@/services/warpcast/get-feed-items'
 import { getMe } from '@/services/warpcast/get-me'
 import { map, pipe } from 'remeda'
 
@@ -33,7 +31,7 @@ export async function handleNounsChannel(env: Env) {
   }
 
   // Fetch Farcaster feed items
-  const { casts: items } = await fetchFarcasterFeed(env)
+  const { items } = await getFeedItems(env, 'nouns', 'unfiltered')
 
   const batch: MessageSendRequest<ReactionBody>[] = []
 
@@ -42,18 +40,15 @@ export async function handleNounsChannel(env: Env) {
     let nounersLikeCount = 0
 
     // Skip if no likes on the item
-    if (item.reactions.likes_count <= 0) {
+    if (item.cast.reactions.count <= 0) {
       continue
     }
 
     // Fetch likes for the cast item
-    const { reactions: likes } = await fetchFarcasterCastReactions(
-      env,
-      item.hash,
-    )
+    const { likes } = await getCastLikes(env, item.cast.hash)
     const likerIds = pipe(
       likes,
-      map((like) => like.user.fid),
+      map((like) => like.reactor.fid),
     )
 
     // Skip if the current user already liked the item
@@ -70,8 +65,8 @@ export async function handleNounsChannel(env: Env) {
 
     // Recast and like the item if threshold is met
     if (nounersLikeCount >= nounersLikeThreshold) {
-      batch.push({ body: { type: 'like', data: { hash: item.hash } } })
-      batch.push({ body: { type: 'recast', data: { hash: item.hash } } })
+      batch.push({ body: { type: 'like', data: { hash: item.cast.hash } } })
+      batch.push({ body: { type: 'recast', data: { hash: item.cast.hash } } })
     }
   }
 
