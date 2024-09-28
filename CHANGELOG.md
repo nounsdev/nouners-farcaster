@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.1] - 2024-09-28
+
+### 🚀 Features
+
+- *(warpcast)* Add new services for recasts, likes, and users
+- *(nouns)* Add fetching functions for accounts, delegates, and voters
+- *(ethereum)* Add functionality to retrieve block number
+- *(cache-handler)* Add caching for Nouns data
+- *(handlers)* Add `channel-handler` with nouns channel support
+- *(scheduled-handler)* Implement cron-based execution
+
+### 🐛 Bug Fixes
+
+- *(scheduler)* Update cron triggers and handlers
+
+### 🚜 Refactor
+
+- *(worker-configuration)* Switch to `Env` interface
+- *(channel-handler)* Optimize reaction processing
+
 ## [1.0.0-alpha.0] - 2024-09-28
 
 ### 🚀 Features
