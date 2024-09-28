@@ -1,6 +1,8 @@
-import { fetchFarcasterFeed } from '@/services/neynar'
+import {
+  fetchFarcasterCastReactions,
+  fetchFarcasterFeed,
+} from '@/services/neynar'
 import { likeCast } from '@/services/warpcast'
-import { getCastLikes } from '@/services/warpcast/get-cast-likes'
 import { getMe } from '@/services/warpcast/get-me'
 import { recast } from '@/services/warpcast/recast'
 import { map, pipe } from 'remeda'
@@ -38,10 +40,13 @@ export async function handleNounsChannel(env: Env) {
     }
 
     // Fetch likes for the cast item
-    const { likes } = await getCastLikes(env, item.hash)
+    const { reactions: likes } = await fetchFarcasterCastReactions(
+      env,
+      item.hash,
+    )
     const likerIds = pipe(
       likes,
-      map((like) => like.reactor.fid),
+      map((like) => like.user.fid),
     )
 
     // Skip if the current user already liked the item
@@ -55,6 +60,8 @@ export async function handleNounsChannel(env: Env) {
         nounersLikeCount += 1
       }
     }
+
+    console.log(nounersLikeCount)
 
     // Recast and like the item if threshold is met
     if (nounersLikeCount >= nounersLikeThreshold) {
