@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.5] - 2024-09-28
+
+### 🚀 Features
+
+- *(handlers)* Add pagination to noun feed items
+- *(handlers)* Add debug logging and adjust fetching logic
+
+### 🐛 Bug Fixes
+
+- *(neynar)* Limit cast results to 200
+
+### 🚜 Refactor
+
+- *(scheduled-handler)* Remove 5-minute cron job
+- *(neynar)* Streamline `fetchFarcasterFeed` logic
+- *(channel-handler)* Update to new API methods
+
 ## [1.0.0-alpha.4] - 2024-09-28
 
 ### 📚 Documentation
