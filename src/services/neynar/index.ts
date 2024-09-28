@@ -77,9 +77,7 @@ interface ErrorResponse {
 
 interface FeedResult {
   casts: Cast[]
-  next?: {
-    cursor: string
-  }
+  cursor?: string | null
 }
 
 interface ReactionResult {
@@ -92,7 +90,10 @@ interface ReactionResponse {
   cursor?: string | null
 }
 
-export const fetchFarcasterFeed = async (env: Env): Promise<FeedResult> => {
+export const fetchFarcasterFeed = async (
+  env: Env,
+  cursor?: string,
+): Promise<FeedResult> => {
   const { NEYNAR_API_KEY: apiKey, NEYNAR_API_URL: apiUrl } = env
 
   const url = `${apiUrl}/v2/farcaster/feed/channels?channel_ids=nouns&with_recasts=true&with_replies=false&limit=100&should_moderate=false`
@@ -102,37 +103,23 @@ export const fetchFarcasterFeed = async (env: Env): Promise<FeedResult> => {
   }
 
   let casts: Cast[] = []
-  let cursor: string | undefined
 
   try {
-    for (let i = 0; i < 10; i++) {
-      // We loop 10 times since each request returns 100 casts
-      const response = await fetch(cursor ? `${url}&cursor=${cursor}` : url, {
-        headers,
-      })
+    // We loop 10 times since each request returns 100 casts
+    const response = await fetch(cursor ? `${url}&cursor=${cursor}` : url, {
+      headers,
+    })
 
-      if (!response.ok) {
-        const errorData: ErrorResponse = await response.json()
-        console.error(errorData.message)
-        return { casts }
-      }
-
-      const data: FeedResponse = await response.json()
-      casts = [...casts, ...data.casts]
-
-      if (data.next?.cursor) {
-        cursor = data.next.cursor
-      } else {
-        break // Stop if there is no next cursor
-      }
-
-      if (casts.length >= 200) {
-        casts = casts.slice(0, 200) // Ensure no more than 200 casts are returned
-        break
-      }
+    if (!response.ok) {
+      const errorData: ErrorResponse = await response.json()
+      console.error(errorData.message)
+      return { casts }
     }
 
-    return { casts }
+    const data: FeedResponse = await response.json()
+    casts = [...casts, ...data.casts]
+
+    return { casts, cursor }
   } catch {
     throw new Error(
       'An unknown error occurred while fetching the Farcaster feed',
