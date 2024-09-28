@@ -13,22 +13,22 @@ interface Response {
 }
 
 /**
- * Fetches feed items from a specified URL using the provided arguments.
- * @async
- * @param env - The environment settings.
- * @param feedKey - The key of the feed.
+ * Fetches feed items based on the provided feed key, feed type, and an optional timestamp.
+ * @param env - The environment variables required to make the request, including access token and base URL.
+ * @param feedKey - The key identifying the feed to be fetched.
  * @param feedType - The type of the feed.
- * @returns - A promise that resolves to an array of feed items if the request is successful, otherwise an empty array.
- * @throws {Error} If an HTTP error occurs during the request.
+ * @param [olderThan] - Optional timestamp to fetch items older than the specified time.
+ * @returns - A promise that resolves to a Result object containing the feed items.
  */
 export const getFeedItems = async (
   env: Env,
   feedKey: string,
   feedType: string,
+  olderThan?: number,
 ): Promise<Result> => {
   const { WARPCAST_ACCESS_TOKEN: accessToken, WARPCAST_BASE_URL: baseUrl } = env
 
-  const body = { feedKey, feedType }
+  const body = { feedKey, feedType, olderThan }
 
   const { result } = await fetchRequest<Response>(
     baseUrl,

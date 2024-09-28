@@ -11,6 +11,38 @@ interface ReactionBody {
 }
 
 /**
+ * Fetches noun feed items from the specified environment until the maximum
+ * number of items is reached or no more items are available.
+ * @param env - The environment from which to fetch the feed items.
+ * @returns A promise that resolves to an object containing the fetched items.
+ */
+async function getNounFeedItems(env: Env) {
+  const allItems: Awaited<ReturnType<typeof getFeedItems>>['items'] = []
+  let fetchedItemsCount = 0
+  const maxItems = 150
+
+  let olderThan: number | undefined
+
+  while (fetchedItemsCount < maxItems) {
+    const { items } = await getFeedItems(env, 'nouns', 'unfiltered', olderThan)
+
+    // Add the new items to the total collection.
+    allItems.push(...items)
+    fetchedItemsCount += items.length
+
+    if (items.length === 0) {
+      // No more items to fetch, exit the loop.
+      break
+    }
+
+    // Set the `olderThan` parameter to the timestamp of the last item fetched.
+    olderThan = items[items.length - 1].timestamp
+  }
+
+  return { items: allItems }
+}
+
+/**
  * Handles the nouns channel in the given environment.
  * @param env - The environment object.
  * @returns - A promise that resolves with no value.
@@ -31,7 +63,7 @@ export async function handleNounsChannel(env: Env) {
   }
 
   // Fetch Farcaster feed items
-  const { items } = await getFeedItems(env, 'nouns', 'unfiltered')
+  const { items } = await getNounFeedItems(env)
 
   const batch: MessageSendRequest<ReactionBody>[] = []
 
