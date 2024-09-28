@@ -25,6 +25,7 @@ crons = ["0 * * * *", "*/5 * * * *"]
 [vars]
 WARPCAST_BASE_URL = "https://client.warpcast.com"
 NOUNS_SUBGRAPH_URL = "https://api.goldsky.com/api/public/project_cldf2o9pqagp43svvbk5u3kmo/subgraphs/nouns/prod/gn"
+NEYNAR_API_URL = "https://api.neynar.com"
 
 # Bind the Workers AI model catalog. Run machine learning models, powered by serverless GPUs, on Cloudflare’s global network
 # Docs: https://developers.cloudflare.com/workers/wrangler/configuration/#workers-ai
