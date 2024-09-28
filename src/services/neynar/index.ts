@@ -126,8 +126,8 @@ export const fetchFarcasterFeed = async (env: Env): Promise<FeedResult> => {
         break // Stop if there is no next cursor
       }
 
-      if (casts.length >= 1000) {
-        casts = casts.slice(0, 1000) // Ensure no more than 1000 casts are returned
+      if (casts.length >= 200) {
+        casts = casts.slice(0, 200) // Ensure no more than 200 casts are returned
         break
       }
     }
