@@ -2,10 +2,15 @@ import {
   fetchFarcasterCastReactions,
   fetchFarcasterFeed,
 } from '@/services/neynar'
-import { likeCast } from '@/services/warpcast'
 import { getMe } from '@/services/warpcast/get-me'
-import { recast } from '@/services/warpcast/recast'
 import { map, pipe } from 'remeda'
+
+interface ReactionBody {
+  type: 'like' | 'recast'
+  data: {
+    hash: string
+  }
+}
 
 /**
  * Handles the nouns channel in the given environment.
@@ -14,7 +19,7 @@ import { map, pipe } from 'remeda'
  */
 export async function handleNounsChannel(env: Env) {
   // Destructure KV from the environment
-  const { KV: kv } = env
+  const { KV: kv, QUEUE: queue } = env
 
   // Fetch the current user
   const { user } = await getMe(env)
@@ -29,6 +34,8 @@ export async function handleNounsChannel(env: Env) {
 
   // Fetch Farcaster feed items
   const { casts: items } = await fetchFarcasterFeed(env)
+
+  const batch: MessageSendRequest<ReactionBody>[] = []
 
   // Process each cast item
   for (const item of items) {
@@ -61,12 +68,19 @@ export async function handleNounsChannel(env: Env) {
       }
     }
 
-    console.log(nounersLikeCount)
-
     // Recast and like the item if threshold is met
     if (nounersLikeCount >= nounersLikeThreshold) {
-      await recast(env, item.hash)
-      await likeCast(env, item.hash)
+      batch.push({ body: { type: 'like', data: { hash: item.hash } } })
+      batch.push({ body: { type: 'recast', data: { hash: item.hash } } })
+    }
+  }
+
+  if (batch.length > 0) {
+    try {
+      await queue.sendBatch(batch)
+      console.log('Batch enqueued successfully:', batch)
+    } catch (error) {
+      console.error('Error enqueuing batch:', error)
     }
   }
 }
