@@ -1,8 +1,9 @@
 {
   "name": "nouners-farcaster",
   "version": "1.0.0-alpha.0",
+  "private": true,
   "description": "",
-  "main": "index.js",
+  "type": "module",
   "scripts": {
     "build": "wrangler deploy --dry-run --outdir dist",
     "cf-typegen": "wrangler types",
@@ -13,11 +14,23 @@
     "start": "wrangler dev --test-scheduled",
     "test": "vitest run"
   },
+  "dependencies": {
+    "cron-time-generator": "2.0.3",
+    "graphql": "16.9.0",
+    "graphql-request": "6.1.0",
+    "luxon": "3.5.0",
+    "remeda": "2.14.0",
+    "type-fest": "4.26.1",
+    "unicorn-magic": "0.3.0",
+    "viem": "2.21.15"
+  },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "0.5.12",
     "@cloudflare/workers-types": "4.20240925.0",
     "@eslint/js": "9.11.1",
     "@types/eslint__js": "8.42.3",
+    "@types/luxon": "3.4.2",
+    "@types/node": "22.7.3",
     "@typescript-eslint/parser": "8.7.0",
     "eslint": "9.11.1",
     "eslint-config-prettier": "9.1.0",
@@ -38,12 +51,5 @@
     "typescript-eslint": "8.7.0",
     "vitest": "2.1.1",
     "wrangler": "3.78.9"
-  },
-  "dependencies": {
-    "cron-time-generator": "2.0.3",
-    "graphql": "16.9.0",
-    "graphql-request": "7.1.0",
-    "luxon": "3.5.0",
-    "remeda": "2.14.0"
   }
 }
