@@ -4,8 +4,10 @@ interface Env {
 	KV: KVNamespace;
 	WARPCAST_BASE_URL: "https://client.warpcast.com";
 	NOUNS_SUBGRAPH_URL: "https://api.goldsky.com/api/public/project_cldf2o9pqagp43svvbk5u3kmo/subgraphs/nouns/prod/gn";
+	NEYNAR_API_URL: "https://api.neynar.com";
 	WARPCAST_ACCESS_TOKEN: string;
 	WARPCAST_API_KEY: string;
 	ALCHEMY_API_KEY: string;
+	NEYNAR_API_KEY: string;
 	QUEUE: Queue;
 }

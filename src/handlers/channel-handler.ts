@@ -1,7 +1,11 @@
+import {
+  fetchFarcasterCastReactions,
+  fetchFarcasterFeed,
+} from '@/services/neynar'
 import { likeCast } from '@/services/warpcast'
-import { getCastLikes } from '@/services/warpcast/get-cast-likes'
-import { getFeedItems } from '@/services/warpcast/get-feed-items'
+import { getMe } from '@/services/warpcast/get-me'
 import { recast } from '@/services/warpcast/recast'
+import { map, pipe } from 'remeda'
 
 /**
  * Handles the nouns channel in the given environment.
@@ -9,36 +13,60 @@ import { recast } from '@/services/warpcast/recast'
  * @returns - A promise that resolves with no value.
  */
 export async function handleNounsChannel(env: Env) {
+  // Destructure KV from the environment
   const { KV: kv } = env
 
+  // Fetch the current user
+  const { user } = await getMe(env)
   const nounersLikeThreshold = 2
+
+  // Fetch Farcaster user IDs from KV store
   const farcasterUsers: number[] =
     (await kv.get('nouns-farcaster-users', { type: 'json' })) ?? []
-
   if (farcasterUsers.length === 0) {
-    return
+    return // Exit if no Farcaster users found
   }
 
-  const { items } = await getFeedItems(env, 'nouns', 'unfiltered')
+  // Fetch Farcaster feed items
+  const { casts: items } = await fetchFarcasterFeed(env)
 
+  // Process each cast item
   for (const item of items) {
     let nounersLikeCount = 0
 
-    if (item.cast.reactions.count <= 0) {
+    // Skip if no likes on the item
+    if (item.reactions.likes_count <= 0) {
       continue
     }
 
-    const { likes } = await getCastLikes(env, item.cast.hash)
+    // Fetch likes for the cast item
+    const { reactions: likes } = await fetchFarcasterCastReactions(
+      env,
+      item.hash,
+    )
+    const likerIds = pipe(
+      likes,
+      map((like) => like.user.fid),
+    )
 
-    for (const like of likes) {
-      if (farcasterUsers.includes(like.reactor.fid)) {
+    // Skip if the current user already liked the item
+    if (likerIds.includes(user.fid)) {
+      continue
+    }
+
+    // Count likes from Farcaster users
+    for (const likerId of likerIds) {
+      if (farcasterUsers.includes(likerId)) {
         nounersLikeCount += 1
       }
     }
 
+    console.log(nounersLikeCount)
+
+    // Recast and like the item if threshold is met
     if (nounersLikeCount >= nounersLikeThreshold) {
-      await recast(env, item.cast.hash)
-      await likeCast(env, item.cast.hash)
+      await recast(env, item.hash)
+      await likeCast(env, item.hash)
     }
   }
 }
