@@ -10,6 +10,17 @@ interface ReactionBody {
   }
 }
 
+// eslint-disable-next-line jsdoc/require-returns-check
+/**
+ * Logs a debug message to the console with optional additional arguments.
+ * @param message - The debug message to log.
+ * @param args - Additional arguments to include in the log.
+ * @returns This function does not return a value.
+ */
+function logDebug(message: string, ...args: unknown[]): void {
+  console.log(`[DEBUG] ${message}`, ...args)
+}
+
 /**
  * Fetches noun feed items from the specified environment until the maximum
  * number of items is reached or no more items are available.
@@ -17,14 +28,24 @@ interface ReactionBody {
  * @returns A promise that resolves to an object containing the fetched items.
  */
 async function getNounFeedItems(env: Env) {
+  logDebug('Fetching noun feed items')
   const allItems: Awaited<ReturnType<typeof getFeedItems>>['items'] = []
   let fetchedItemsCount = 0
-  const maxItems = 150
+  const maxItems = 300
 
-  let olderThan: number | undefined
+  let excludeItemIdPrefixes: string[] = []
 
   while (fetchedItemsCount < maxItems) {
-    const { items } = await getFeedItems(env, 'nouns', 'unfiltered', olderThan)
+    logDebug(
+      'Fetching feed items with excludeItemIdPrefixes:',
+      excludeItemIdPrefixes,
+    )
+    const { items } = await getFeedItems(
+      env,
+      'nouns',
+      'default',
+      excludeItemIdPrefixes,
+    )
 
     // Add the new items to the total collection.
     allItems.push(...items)
@@ -32,13 +53,19 @@ async function getNounFeedItems(env: Env) {
 
     if (items.length === 0) {
       // No more items to fetch, exit the loop.
+      logDebug('No more items to fetch')
       break
     }
 
-    // Set the `olderThan` parameter to the timestamp of the last item fetched.
-    olderThan = items[items.length - 1].timestamp
+    // Add new prefixes to `excludeItemIdPrefixes` without resetting it.
+    const newPrefixes = pipe(
+      items,
+      map((item) => item.cast.hash.replace(/^0x/, '').slice(0, 8)),
+    )
+    excludeItemIdPrefixes = excludeItemIdPrefixes.concat(newPrefixes)
   }
 
+  logDebug('Fetched total items:', fetchedItemsCount)
   return { items: allItems }
 }
 
@@ -48,35 +75,42 @@ async function getNounFeedItems(env: Env) {
  * @returns - A promise that resolves with no value.
  */
 export async function handleNounsChannel(env: Env) {
-  // Destructure KV from the environment
+  logDebug('Handling Nouns channel')
   const { KV: kv, QUEUE: queue } = env
 
   // Fetch the current user
+  logDebug('Fetching current user')
   const { user } = await getMe(env)
   const nounersLikeThreshold = 2
 
   // Fetch Farcaster user IDs from KV store
+  logDebug('Fetching Farcaster user IDs from KV store')
   const farcasterUsers: number[] =
     (await kv.get('nouns-farcaster-users', { type: 'json' })) ?? []
   if (farcasterUsers.length === 0) {
+    logDebug('No Farcaster users found')
     return // Exit if no Farcaster users found
   }
 
   // Fetch Farcaster feed items
+  logDebug('Fetching Farcaster feed items')
   const { items } = await getNounFeedItems(env)
 
   const batch: MessageSendRequest<ReactionBody>[] = []
 
   // Process each cast item
   for (const item of items) {
+    logDebug('Processing cast item:', item.cast.hash)
     let nounersLikeCount = 0
 
     // Skip if no likes on the item
     if (item.cast.reactions.count <= 0) {
+      logDebug('Skipping item with no likes:', item.cast.hash)
       continue
     }
 
     // Fetch likes for the cast item
+    logDebug('Fetching likes for item:', item.cast.hash)
     const { likes } = await getCastLikes(env, item.cast.hash)
     const likerIds = pipe(
       likes,
@@ -85,6 +119,7 @@ export async function handleNounsChannel(env: Env) {
 
     // Skip if the current user already liked the item
     if (likerIds.includes(user.fid)) {
+      logDebug('Current user already liked the item:', item.cast.hash)
       continue
     }
 
@@ -97,6 +132,10 @@ export async function handleNounsChannel(env: Env) {
 
     // Recast and like the item if threshold is met
     if (nounersLikeCount >= nounersLikeThreshold) {
+      logDebug(
+        'Threshold met, preparing to like and recast item:',
+        item.cast.hash,
+      )
       batch.push({ body: { type: 'like', data: { hash: item.cast.hash } } })
       batch.push({ body: { type: 'recast', data: { hash: item.cast.hash } } })
     }
@@ -105,9 +144,9 @@ export async function handleNounsChannel(env: Env) {
   if (batch.length > 0) {
     try {
       await queue.sendBatch(batch)
-      console.log('Batch enqueued successfully:', batch)
+      logDebug('Batch enqueued successfully:', batch)
     } catch (error) {
-      console.error('Error enqueuing batch:', error)
+      logDebug('Error enqueuing batch:', error)
     }
   }
 }
@@ -118,5 +157,7 @@ export async function handleNounsChannel(env: Env) {
  * @returns A Promise that resolves when the channel handler has completed execution.
  */
 export async function channelHandler(env: Env) {
+  logDebug('Channel handler started')
   await handleNounsChannel(env)
+  logDebug('Channel handler completed')
 }
