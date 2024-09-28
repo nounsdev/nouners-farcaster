@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.2] - 2024-09-28
+
+### 🚀 Features
+
+- *(neynar)* Add `fetchFarcasterFeed` for channel feeds
+- *(services)* Add `getMe` function to warpcast service
+- *(services)* Add `fetchFarcasterCastReactions` method
+
+### 🐛 Bug Fixes
+
+- *(channel-handler)* Update feed fetching logic
+
+### 🚜 Refactor
+
+- *(services)* Use `const` instead of `let` for `url`
+- *(channel-handler)* Optimize cast like processing
+- *(channel-handler)* Replace `getCastLikes` with `fetchFarcasterCastReactions`
+
+### 📚 Documentation
+
+- *(README)* Add badges and project warning
+
+### ⚙️ Miscellaneous Tasks
+
+- *(config)* Add `NEYNAR_API_URL` and `NEYNAR_API_KEY`
+- *(deploy)* Add `NEYNAR_API_KEY` to secrets
+
 ## [1.0.0-alpha.1] - 2024-09-28
 
 ### 🚀 Features
