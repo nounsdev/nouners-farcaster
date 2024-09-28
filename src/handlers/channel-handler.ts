@@ -1,6 +1,6 @@
+import { fetchFarcasterFeed } from '@/services/neynar'
 import { likeCast } from '@/services/warpcast'
 import { getCastLikes } from '@/services/warpcast/get-cast-likes'
-import { getFeedItems } from '@/services/warpcast/get-feed-items'
 import { recast } from '@/services/warpcast/recast'
 
 /**
@@ -19,26 +19,28 @@ export async function handleNounsChannel(env: Env) {
     return
   }
 
-  const { items } = await getFeedItems(env, 'nouns', 'unfiltered')
+  const { casts: items } = await fetchFarcasterFeed(env)
+  console.log(items.length)
 
   for (const item of items) {
     let nounersLikeCount = 0
 
-    if (item.cast.reactions.count <= 0) {
+    if (item.reactions.likes_count <= 0) {
       continue
     }
 
-    const { likes } = await getCastLikes(env, item.cast.hash)
+    const { likes } = await getCastLikes(env, item.hash)
 
     for (const like of likes) {
       if (farcasterUsers.includes(like.reactor.fid)) {
         nounersLikeCount += 1
       }
     }
+    console.log(nounersLikeCount)
 
     if (nounersLikeCount >= nounersLikeThreshold) {
-      await recast(env, item.cast.hash)
-      await likeCast(env, item.cast.hash)
+      await recast(env, item.hash)
+      await likeCast(env, item.hash)
     }
   }
 }
