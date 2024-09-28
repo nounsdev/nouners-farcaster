@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.4] - 2024-09-28
+
+### 📚 Documentation
+
+- Update project `README` file
+
+### ⚙️ Miscellaneous Tasks
+
+- *(deploy)* Add `NEYNAR_API_KEY` to environment variables
+
 ## [1.0.0-alpha.3] - 2024-09-28
 
 ### 🚀 Features
