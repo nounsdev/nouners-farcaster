@@ -1,3 +1,5 @@
+import { IntRange } from 'type-fest'
+
 interface User {
   object: string
   fid: number
@@ -19,6 +21,13 @@ interface User {
   }
   active_status: string
   power_badge: boolean
+}
+
+interface Reaction {
+  reaction_type: string
+  reaction_timestamp: string
+  object: string
+  user: User
 }
 
 interface Cast {
@@ -66,14 +75,24 @@ interface ErrorResponse {
   property: string
 }
 
-interface Result {
+interface FeedResult {
   casts: Cast[]
   next?: {
     cursor: string
   }
 }
 
-export const fetchFarcasterFeed = async (env: Env): Promise<Result> => {
+interface ReactionResult {
+  reactions: Reaction[]
+  cursor?: string | null
+}
+
+interface ReactionResponse {
+  reactions: Reaction[]
+  cursor?: string | null
+}
+
+export const fetchFarcasterFeed = async (env: Env): Promise<FeedResult> => {
   const { NEYNAR_API_KEY: apiKey, NEYNAR_API_URL: apiUrl } = env
 
   const url = `${apiUrl}/v2/farcaster/feed/channels?channel_ids=nouns&with_recasts=true&with_replies=false&limit=100&should_moderate=false`
@@ -118,5 +137,48 @@ export const fetchFarcasterFeed = async (env: Env): Promise<Result> => {
     throw new Error(
       'An unknown error occurred while fetching the Farcaster feed',
     )
+  }
+}
+
+// New method to fetch likes for a specific cast
+export const fetchFarcasterCastReactions = async (
+  env: Env,
+  castHash: string,
+  types = 'likes',
+  limit: IntRange<1, 101> = 100,
+): Promise<ReactionResult> => {
+  const { NEYNAR_API_KEY: apiKey, NEYNAR_API_URL: apiUrl } = env
+
+  const url = `${apiUrl}/v2/farcaster/reactions/cast?hash=${castHash}&types=${types}&limit=${limit.toString()}`
+  const headers = {
+    accept: 'application/json',
+    api_key: apiKey,
+  }
+
+  let reactions: Reaction[] = []
+  let cursor: string | null = null
+
+  try {
+    do {
+      const response = await fetch(cursor ? `${url}&cursor=${cursor}` : url, {
+        headers,
+      })
+
+      if (!response.ok) {
+        const errorData: ErrorResponse = await response.json()
+        console.error(errorData.message)
+        return { reactions: [] }
+      }
+
+      const data: ReactionResponse = await response.json()
+      reactions = [...reactions, ...data.reactions]
+
+      cursor = data.cursor ?? null
+    } while (cursor)
+
+    return { reactions, cursor }
+  } catch (error) {
+    console.error('Error fetching cast reactions:', error)
+    throw new Error('An unknown error occurred while fetching cast reactions')
   }
 }
