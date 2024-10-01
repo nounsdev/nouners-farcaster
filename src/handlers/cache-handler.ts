@@ -16,19 +16,25 @@ const expirationTtl = 60 * 60 * 24
  */
 async function fetchHolderAddresses(env: Env) {
   const { KV: kv } = env
+  const cacheKey = 'nouns-holders-addresses'
 
   let holdersAddresses: string[] =
-    (await kv.get('nouns-holders-addresses', { type: 'json' })) ?? []
-  if (holdersAddresses.length === 0) {
-    const { accounts } = await fetchAccounts(env)
-    holdersAddresses = pipe(
-      accounts,
-      map((account) => account.id),
-    )
-    await kv.put('nouns-holders-addresses', JSON.stringify(holdersAddresses), {
-      expirationTtl,
-    })
+    (await kv.get(cacheKey, { type: 'json' })) ?? []
+
+  if (holdersAddresses.length > 0) {
+    return holdersAddresses
   }
+
+  const { accounts } = await fetchAccounts(env)
+  holdersAddresses = pipe(
+    accounts,
+    map((account) => account.id),
+  )
+
+  await kv.put(cacheKey, JSON.stringify(holdersAddresses), {
+    expirationTtl,
+  })
+
   return holdersAddresses
 }
 
@@ -40,23 +46,25 @@ async function fetchHolderAddresses(env: Env) {
  */
 async function fetchDelegateAddresses(env: Env) {
   const { KV: kv } = env
+  const cacheKey = 'nouns-delegates-addresses'
 
   let delegatesAddresses: string[] =
-    (await kv.get('nouns-delegates-addresses', { type: 'json' })) ?? []
-  if (delegatesAddresses.length === 0) {
-    const { delegates } = await fetchDelegates(env)
-    delegatesAddresses = pipe(
-      delegates,
-      map((account) => account.id),
-    )
-    await kv.put(
-      'nouns-delegates-addresses',
-      JSON.stringify(delegatesAddresses),
-      {
-        expirationTtl,
-      },
-    )
+    (await kv.get(cacheKey, { type: 'json' })) ?? []
+
+  if (delegatesAddresses.length > 0) {
+    return delegatesAddresses
   }
+
+  const { delegates } = await fetchDelegates(env)
+  delegatesAddresses = pipe(
+    delegates,
+    map((account) => account.id),
+  )
+
+  await kv.put(cacheKey, JSON.stringify(delegatesAddresses), {
+    expirationTtl,
+  })
+
   return delegatesAddresses
 }
 
@@ -68,41 +76,41 @@ async function fetchDelegateAddresses(env: Env) {
  */
 async function fetchAndStoreFarcasterUsers(env: Env) {
   const { KV: kv } = env
+  const cacheKey = 'nouns-farcaster-users'
 
   const holdersAddresses = await fetchHolderAddresses(env)
 
   const delegatesAddresses = await fetchDelegateAddresses(env)
 
   let farcasterUsers: number[] =
-    (await kv.get('nouns-farcaster-users', { type: 'json' })) ?? []
-  if (farcasterUsers.length === 0) {
-    const addresses = pipe(
-      [...holdersAddresses, ...delegatesAddresses],
-      unique(),
-    )
+    (await kv.get(cacheKey, { type: 'json' })) ?? []
 
-    for (const address of addresses) {
-      try {
-        const { user } = await getUserByVerification(env, address)
-        farcasterUsers = pipe(
-          [...farcasterUsers, user.fid],
-          unique(),
-          sortBy((fid) => fid),
-        )
-      } catch (error) {
-        if (
-          error instanceof Error &&
-          !error.message.startsWith('No FID has connected')
-        ) {
-          console.error(`An error occurred: ${error.message}`)
-        }
+  if (farcasterUsers.length > 0) {
+    return
+  }
+
+  const addresses = pipe([...holdersAddresses, ...delegatesAddresses], unique())
+  for (const address of addresses) {
+    try {
+      const { user } = await getUserByVerification(env, address)
+      farcasterUsers = pipe(
+        [...farcasterUsers, user.fid],
+        unique(),
+        sortBy((fid) => fid),
+      )
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        !error.message.startsWith('No FID has connected')
+      ) {
+        console.error(`An error occurred: ${error.message}`)
       }
     }
-
-    await kv.put('nouns-farcaster-users', JSON.stringify(farcasterUsers), {
-      expirationTtl,
-    })
   }
+
+  await kv.put(cacheKey, JSON.stringify(farcasterUsers), {
+    expirationTtl,
+  })
 }
 
 /**
@@ -111,46 +119,49 @@ async function fetchAndStoreFarcasterUsers(env: Env) {
  */
 async function fetchAndStoreFarcasterVoters(env: Env) {
   const { KV: kv } = env
+  const cacheKey = 'nouns-farcaster-voters'
 
-  let votersAddresses: string[]
   let farcasterVoters: number[] =
-    (await kv.get('nouns-farcaster-voters', { type: 'json' })) ?? []
-  if (farcasterVoters.length === 0) {
-    const now = DateTime.now()
-    const blockTimeInSeconds = 12
-    const threeMonthsAgo = now.minus({ months: 3 })
-    const secondsInThreeMonths = now.diff(threeMonthsAgo, 'seconds').seconds
-    const blocksInThreeMonths = secondsInThreeMonths / blockTimeInSeconds
+    (await kv.get(cacheKey, { type: 'json' })) ?? []
 
-    const startBlock = (await getBlockNumber(env)) - blocksInThreeMonths
-    const { voters } = await fetchVoters(env, startBlock)
-    votersAddresses = pipe(
-      voters,
-      map((voter) => voter.id),
-    )
+  if (farcasterVoters.length > 0) {
+    return
+  }
 
-    for (const address of votersAddresses) {
-      try {
-        const { user } = await getUserByVerification(env, address)
-        farcasterVoters = pipe(
-          [...farcasterVoters, user.fid],
-          unique(),
-          sortBy((fid) => fid),
-        )
-      } catch (error) {
-        if (
-          error instanceof Error &&
-          !error.message.startsWith('No FID has connected')
-        ) {
-          console.error(`An error occurred: ${error.message}`)
-        }
+  const now = DateTime.now()
+  const blockTimeInSeconds = 12
+  const threeMonthsAgo = now.minus({ months: 3 })
+  const secondsInThreeMonths = now.diff(threeMonthsAgo, 'seconds').seconds
+  const blocksInThreeMonths = secondsInThreeMonths / blockTimeInSeconds
+  const startBlock = (await getBlockNumber(env)) - blocksInThreeMonths
+
+  const { voters } = await fetchVoters(env, startBlock)
+  const votersAddresses: string[] = pipe(
+    voters,
+    map((voter) => voter.id),
+  )
+
+  for (const address of votersAddresses) {
+    try {
+      const { user } = await getUserByVerification(env, address)
+      farcasterVoters = pipe(
+        [...farcasterVoters, user.fid],
+        unique(),
+        sortBy((fid) => fid),
+      )
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        !error.message.startsWith('No FID has connected')
+      ) {
+        console.error(`An error occurred: ${error.message}`)
       }
     }
-
-    await kv.put('nouns-farcaster-voters', JSON.stringify(farcasterVoters), {
-      expirationTtl,
-    })
   }
+
+  await kv.put(cacheKey, JSON.stringify(farcasterVoters), {
+    expirationTtl,
+  })
 }
 
 /**
@@ -159,6 +170,8 @@ async function fetchAndStoreFarcasterVoters(env: Env) {
  * @returns - A promise that resolves when caching is complete.
  */
 export async function cacheHandler(env: Env) {
-  await fetchAndStoreFarcasterUsers(env)
-  await fetchAndStoreFarcasterVoters(env)
+  await Promise.all([
+    fetchAndStoreFarcasterUsers(env),
+    fetchAndStoreFarcasterVoters(env),
+  ])
 }
