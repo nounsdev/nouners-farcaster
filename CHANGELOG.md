@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.6] - 2024-10-01
+
+### 🚀 Features
+
+- *(warpcast)* Add a function to create a new cast
+
+### 🚜 Refactor
+
+- *(cache-handler)* Split cache functions
+- *(cache-handler)* Simplify cache key retrieval
+
 ## [1.0.0-alpha.5] - 2024-09-28
 
 ### 🚀 Features
