@@ -109,8 +109,8 @@ importers:
         specifier: 2.1.2
         version: 2.1.2(@types/node@22.7.5)
       wrangler:
-        specifier: 3.80.2
-        version: 3.80.2(@cloudflare/workers-types@4.20241004.0)
+        specifier: 3.80.3
+        version: 3.80.3(@cloudflare/workers-types@4.20241004.0)
 
 packages:
 
