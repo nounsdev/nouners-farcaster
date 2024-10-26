@@ -34,8 +34,8 @@ importers:
         version: 2.21.34(typescript@5.6.3)(zod@3.23.8)
     devDependencies:
       '@cloudflare/vitest-pool-workers':
-        specifier: 0.5.21
-        version: 0.5.21(@cloudflare/workers-types@4.20241022.0)(@vitest/runner@2.1.3)(@vitest/snapshot@2.1.3)(vitest@2.1.3(@types/node@22.7.9))
+        specifier: 0.5.22
+        version: 0.5.22(@cloudflare/workers-types@4.20241022.0)(@vitest/runner@2.1.3)(@vitest/snapshot@2.1.3)(vitest@2.1.3(@types/node@22.7.9))
       '@cloudflare/workers-types':
         specifier: 4.20241022.0
         version: 4.20241022.0
@@ -133,8 +133,8 @@ packages:
     resolution: {integrity: sha512-YLPHc8yASwjNkmcDMQMY35yiWjoKAKnhUbPRszBRS0YgH+IXtsMp61j+yTcnCE3oO2DgP0U3iejLC8FTtKDC8Q==}
     engines: {node: '>=16.13'}
 
-  '@cloudflare/vitest-pool-workers@0.5.21':
-    resolution: {integrity: sha512-sUR6T5H2VsyMecsSqRgoXFUZjZbwk9DuijQ2uCi0SRSJ6enapt6scKSU/wfCmL7QI9EK6c1QnUuJjC9Y+iLnRA==}
+  '@cloudflare/vitest-pool-workers@0.5.22':
+    resolution: {integrity: sha512-Zynt47hQbITDGDVjuI11/NlLuKCByooIVKbCPG0kIu3C4Wr1QcNmzZyhGVxVWKjQDRjXDgbqVN605G+SXy8twg==}
     peerDependencies:
       '@vitest/runner': 2.0.x - 2.1.x
       '@vitest/snapshot': 2.0.x - 2.1.x
@@ -2327,7 +2327,7 @@ snapshots:
     dependencies:
       mime: 3.0.0
 
-  '@cloudflare/vitest-pool-workers@0.5.21(@cloudflare/workers-types@4.20241022.0)(@vitest/runner@2.1.3)(@vitest/snapshot@2.1.3)(vitest@2.1.3(@types/node@22.7.9))':
+  '@cloudflare/vitest-pool-workers@0.5.22(@cloudflare/workers-types@4.20241022.0)(@vitest/runner@2.1.3)(@vitest/snapshot@2.1.3)(vitest@2.1.3(@types/node@22.7.9))':
     dependencies:
       '@vitest/runner': 2.1.3
       '@vitest/snapshot': 2.1.3
@@ -2335,10 +2335,10 @@ snapshots:
       cjs-module-lexer: 1.4.1
       devalue: 4.3.3
       esbuild: 0.17.19
-      miniflare: 3.20241018.0
+      miniflare: 3.20241022.0
       semver: 7.6.3
       vitest: 2.1.3(@types/node@22.7.9)
-      wrangler: 3.82.0(@cloudflare/workers-types@4.20241022.0)
+      wrangler: 3.83.0(@cloudflare/workers-types@4.20241022.0)
       zod: 3.23.8
     transitivePeerDependencies:
       - '@cloudflare/workers-types'
