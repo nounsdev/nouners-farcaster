@@ -20,7 +20,7 @@ jobs:
           ref: ${{ github.event.release.tag_name }}
 
       - name: Setup Node.js Environment
-        uses: actions/setup-node@v4.0.4 # Action for setting up Node environment.
+        uses: actions/setup-node@v4.1.0 # Action for setting up Node environment.
         with:
           node-version: latest
 
