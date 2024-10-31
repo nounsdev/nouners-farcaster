@@ -14,6 +14,9 @@
     "start": "wrangler dev --test-scheduled",
     "test": "vitest run"
   },
+  "resolutions": {
+    "cookie": ">=0.7.0"
+  },
   "dependencies": {
     "cron-time-generator": "2.0.3",
     "graphql": "16.9.0",
