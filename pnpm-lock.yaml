@@ -15,11 +15,11 @@ importers:
         specifier: 2.0.3
         version: 2.0.3
       graphql:
-        specifier: 16.9.0
-        version: 16.9.0
+        specifier: 16.10.0
+        version: 16.10.0
       graphql-request:
         specifier: 6.1.0
-        version: 6.1.0(graphql@16.9.0)
+        version: 6.1.0(graphql@16.10.0)
       luxon:
         specifier: 3.5.0
         version: 3.5.0
@@ -1322,8 +1322,8 @@ packages:
     peerDependencies:
       graphql: 14 - 16
 
-  graphql@16.9.0:
-    resolution: {integrity: sha512-GGTKBX4SD7Wdb8mqeDLni2oaRGYQWjWHGKPQ24ZMnUtKfcsVoiv4uX8+LJr1K6U5VW2Lu1BwJnj7uiori0YtRw==}
+  graphql@16.10.0:
+    resolution: {integrity: sha512-AjqGKbDGUFRKIRCP9tCKiIGHyriz2oHEbPIbEtcSLSs4YjReZOIPQQWek4+6hjw62H9QShXHyaGivGiYVLeYFQ==}
     engines: {node: ^12.22.0 || ^14.16.0 || ^16.0.0 || >=17.0.0}
 
   has-flag@3.0.0:
@@ -2511,9 +2511,9 @@ snapshots:
 
   '@fastify/busboy@2.1.1': {}
 
-  '@graphql-typed-document-node/core@3.2.0(graphql@16.9.0)':
+  '@graphql-typed-document-node/core@3.2.0(graphql@16.10.0)':
     dependencies:
-      graphql: 16.9.0
+      graphql: 16.10.0
 
   '@humanfs/core@0.19.1': {}
 
@@ -3358,15 +3358,15 @@ snapshots:
 
   graphemer@1.4.0: {}
 
-  graphql-request@6.1.0(graphql@16.9.0):
+  graphql-request@6.1.0(graphql@16.10.0):
     dependencies:
-      '@graphql-typed-document-node/core': 3.2.0(graphql@16.9.0)
+      '@graphql-typed-document-node/core': 3.2.0(graphql@16.10.0)
       cross-fetch: 3.1.8
-      graphql: 16.9.0
+      graphql: 16.10.0
     transitivePeerDependencies:
       - encoding
 
-  graphql@16.9.0: {}
+  graphql@16.10.0: {}
 
   has-flag@3.0.0: {}
 
