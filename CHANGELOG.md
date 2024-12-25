@@ -30,35 +30,35 @@ All notable changes to this project will be documented in this file.
 
 ### ⚙️ Miscellaneous Tasks
 
-- _(wrangler)_ Enable Workers Logs observability
+- *(wrangler)* Enable Workers Logs observability
 
 ## [1.0.0-alpha.6] - 2024-10-01
 
 ### 🚀 Features
 
-- _(warpcast)_ Add a function to create a new cast
+- *(warpcast)* Add a function to create a new cast
 
 ### 🚜 Refactor
 
-- _(cache-handler)_ Split cache functions
-- _(cache-handler)_ Simplify cache key retrieval
+- *(cache-handler)* Split cache functions
+- *(cache-handler)* Simplify cache key retrieval
 
 ## [1.0.0-alpha.5] - 2024-09-28
 
 ### 🚀 Features
 
-- _(handlers)_ Add pagination to noun feed items
-- _(handlers)_ Add debug logging and adjust fetching logic
+- *(handlers)* Add pagination to noun feed items
+- *(handlers)* Add debug logging and adjust fetching logic
 
 ### 🐛 Bug Fixes
 
-- _(neynar)_ Limit cast results to 200
+- *(neynar)* Limit cast results to 200
 
 ### 🚜 Refactor
 
-- _(scheduled-handler)_ Remove 5-minute cron job
-- _(neynar)_ Streamline `fetchFarcasterFeed` logic
-- _(channel-handler)_ Update to new API methods
+- *(scheduled-handler)* Remove 5-minute cron job
+- *(neynar)* Streamline `fetchFarcasterFeed` logic
+- *(channel-handler)* Update to new API methods
 
 ## [1.0.0-alpha.4] - 2024-09-28
 
@@ -68,88 +68,88 @@ All notable changes to this project will be documented in this file.
 
 ### ⚙️ Miscellaneous Tasks
 
-- _(deploy)_ Add `NEYNAR_API_KEY` to environment variables
+- *(deploy)* Add `NEYNAR_API_KEY` to environment variables
 
 ## [1.0.0-alpha.3] - 2024-09-28
 
 ### 🚀 Features
 
-- _(queue-handler)_ Add reactions processing
+- *(queue-handler)* Add reactions processing
 
 ## [1.0.0-alpha.2] - 2024-09-28
 
 ### 🚀 Features
 
-- _(neynar)_ Add `fetchFarcasterFeed` for channel feeds
-- _(services)_ Add `getMe` function to warpcast service
-- _(services)_ Add `fetchFarcasterCastReactions` method
+- *(neynar)* Add `fetchFarcasterFeed` for channel feeds
+- *(services)* Add `getMe` function to warpcast service
+- *(services)* Add `fetchFarcasterCastReactions` method
 
 ### 🐛 Bug Fixes
 
-- _(channel-handler)_ Update feed fetching logic
+- *(channel-handler)* Update feed fetching logic
 
 ### 🚜 Refactor
 
-- _(services)_ Use `const` instead of `let` for `url`
-- _(channel-handler)_ Optimize cast like processing
-- _(channel-handler)_ Replace `getCastLikes` with `fetchFarcasterCastReactions`
+- *(services)* Use `const` instead of `let` for `url`
+- *(channel-handler)* Optimize cast like processing
+- *(channel-handler)* Replace `getCastLikes` with `fetchFarcasterCastReactions`
 
 ### 📚 Documentation
 
-- _(README)_ Add badges and project warning
+- *(README)* Add badges and project warning
 
 ### ⚙️ Miscellaneous Tasks
 
-- _(config)_ Add `NEYNAR_API_URL` and `NEYNAR_API_KEY`
-- _(deploy)_ Add `NEYNAR_API_KEY` to secrets
+- *(config)* Add `NEYNAR_API_URL` and `NEYNAR_API_KEY`
+- *(deploy)* Add `NEYNAR_API_KEY` to secrets
 
 ## [1.0.0-alpha.1] - 2024-09-28
 
 ### 🚀 Features
 
-- _(warpcast)_ Add new services for recasts, likes, and users
-- _(nouns)_ Add fetching functions for accounts, delegates, and voters
-- _(ethereum)_ Add functionality to retrieve block number
-- _(cache-handler)_ Add caching for Nouns data
-- _(handlers)_ Add `channel-handler` with nouns channel support
-- _(scheduled-handler)_ Implement cron-based execution
+- *(warpcast)* Add new services for recasts, likes, and users
+- *(nouns)* Add fetching functions for accounts, delegates, and voters
+- *(ethereum)* Add functionality to retrieve block number
+- *(cache-handler)* Add caching for Nouns data
+- *(handlers)* Add `channel-handler` with nouns channel support
+- *(scheduled-handler)* Implement cron-based execution
 
 ### 🐛 Bug Fixes
 
-- _(scheduler)_ Update cron triggers and handlers
+- *(scheduler)* Update cron triggers and handlers
 
 ### 🚜 Refactor
 
-- _(worker-configuration)_ Switch to `Env` interface
-- _(channel-handler)_ Optimize reaction processing
+- *(worker-configuration)* Switch to `Env` interface
+- *(channel-handler)* Optimize reaction processing
 
 ## [1.0.0-alpha.0] - 2024-09-28
 
 ### 🚀 Features
 
-- _(handlers)_ Add entry points for queue and scheduled tasks
-- _(handlers)_ Add `scheduledHandler` for scheduled tasks
-- _(queue-handler)_ Add initial `queueHandler` function
+- *(handlers)* Add entry points for queue and scheduled tasks
+- *(handlers)* Add `scheduledHandler` for scheduled tasks
+- *(queue-handler)* Add initial `queueHandler` function
 
 ### 📚 Documentation
 
-- _(templates)_ Add issue templates for bugs and features
+- *(templates)* Add issue templates for bugs and features
 
 ### 🧪 Testing
 
-- _(cloudflare)_ Add tests for scheduled handler
+- *(cloudflare)* Add tests for scheduled handler
 
 ### ⚙️ Miscellaneous Tasks
 
-- _(graphql)_ Add GraphQL schema definition for Nouns
-- _(ci)_ Add `stale.yml` for stale issue automation
-- _(ci)_ Add funding config for GitHub and custom platform
-- _(dependabot)_ Add configuration for dependency updates
-- _(workflow)_ Add build pipeline for CI/CD
-- _(workflows)_ Add deploy workflow for production releases
-- _(git-flow)_ Add workflow for automated PR creation
-- _(husky)_ Add pre-commit hooks for linting and testing
-- _(config)_ Add .editorconfig for consistent code style
-- _(license)_ Add Apache License 2.0
+- *(graphql)* Add GraphQL schema definition for Nouns
+- *(ci)* Add `stale.yml` for stale issue automation
+- *(ci)* Add funding config for GitHub and custom platform
+- *(dependabot)* Add configuration for dependency updates
+- *(workflow)* Add build pipeline for CI/CD
+- *(workflows)* Add deploy workflow for production releases
+- *(git-flow)* Add workflow for automated PR creation
+- *(husky)* Add pre-commit hooks for linting and testing
+- *(config)* Add .editorconfig for consistent code style
+- *(license)* Add Apache License 2.0
 
 <!-- generated by git-cliff -->
