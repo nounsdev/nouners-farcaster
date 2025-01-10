@@ -23,7 +23,7 @@
     "graphql-request": "6.1.0",
     "luxon": "3.5.0",
     "remeda": "2.19.0",
-    "type-fest": "4.31.0",
+    "type-fest": "4.32.0",
     "unicorn-magic": "0.3.0",
     "viem": "2.22.4"
   },
