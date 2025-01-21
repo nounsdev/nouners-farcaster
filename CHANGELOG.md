@@ -2,6 +2,33 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.21] - 2025-01-21
+
+### 🚀 Features
+
+- *(ethereum)* Add `getBlockTimestamp` service function
+- *(services)* Add `getProposals` function for fetching proposals
+- *(utilities)* Add custom `logger` with pino integration
+- *(handlers)* Add `proposalHandler` to process proposals
+- *(handlers)* Add daily proposal handling at 14:00
+- *(warpcast)* Add `getDirectCastConversations` function
+- *(handlers)* Add `directCastsHandler` for managing casts
+- *(scheduled-handler)* Add `directCastsHandler` cron job
+- *(services)* Add `getFollowers` method to fetch user followers
+- *(proposal-handler)* Filter recipients by followers list
+- *(services)* Add `sendDirectCast` function to Warpcast
+- *(queue-handler)* Add support for direct cast tasks
+
+### 🚜 Refactor
+
+- *(cache-handler)* Add logging and improve clarity
+- *(proposal-handler)* Rename `subscribers` to `voters`
+- *(proposal-handler)* Improve recipient filtering logic
+
+### ⚙️ Miscellaneous Tasks
+
+- *(config)* Add new cron triggers to `wrangler.toml`
+
 ## [1.0.0-alpha.20] - 2025-01-21
 
 ### ⚙️ Miscellaneous Tasks
