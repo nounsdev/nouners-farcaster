@@ -1,10 +1,21 @@
 import { likeCast } from '@/services/warpcast'
 import { recast } from '@/services/warpcast/recast'
+import { sendDirectCast } from '@/services/warpcast/send-direct-cast'
+import { logger } from '@/utilities/logger'
 
 interface ReactionBody {
   type: 'like' | 'recast'
   data: {
     hash: string
+  }
+}
+
+interface DirectCastBody {
+  type: 'direct-cast'
+  data: {
+    recipientFid: number
+    message: string
+    idempotencyKey: string
   }
 }
 
@@ -60,6 +71,36 @@ async function handleRecastTask(env: Env, data: ReactionBody['data']) {
 }
 
 /**
+ * Handles the task of sending a direct cast message.
+ * @param env - The environment configuration object.
+ * @param data - The data for the direct cast message, including recipient ID, message content, and idempotency key.
+ * @returns A promise that resolves when the direct cast task is completed.
+ */
+async function handleDirectCastTask(env: Env, data: DirectCastBody['data']) {
+  const { recipientFid, message: castMessage, idempotencyKey } = data
+
+  logger.info({ recipientFid, idempotencyKey }, 'Sending direct cast message.')
+
+  try {
+    const result = await sendDirectCast(
+      env,
+      recipientFid,
+      castMessage,
+      idempotencyKey,
+    )
+
+    if (!result.success) {
+      throw new Error(`Non-successful result: ${JSON.stringify(result)}`)
+    }
+
+    logger.info({ recipientFid, result }, 'Direct cast sent successfully.')
+  } catch (error) {
+    logger.error({ recipientFid, error }, 'Failed to send direct cast message.')
+    throw error
+  }
+}
+
+/**
  * Processes a message and handles tasks based on its type.
  * @param env - The environment configuration object used for task handling.
  * @param message - The message object containing the type and data to be processed.
@@ -75,6 +116,9 @@ async function processMessage(env: Env, message: Message) {
       break
     case 'recast':
       await handleRecastTask(env, data as ReactionBody['data'])
+      break
+    case 'direct-cast':
+      await handleDirectCastTask(env, data as DirectCastBody['data'])
       break
 
     default:
@@ -97,14 +141,23 @@ export async function queueHandler(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _ctx: ExecutionContext,
 ) {
+  logger.info({ batchSize: batch.messages.length }, 'Processing message batch.')
+
   for (const message of batch.messages) {
     try {
       await processMessage(env, message)
 
       // Acknowledge the message after successful processing
       message.ack()
+      logger.info(
+        { messageId: message.id },
+        'Message acknowledged successfully.',
+      )
     } catch (error) {
-      console.error('Error processing message, will retry:', error)
+      logger.error(
+        { messageId: message.id, error, attempts: message.attempts },
+        'Error processing message, retrying...',
+      )
 
       // Retry the message in case of failure
       message.retry({

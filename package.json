@@ -1,6 +1,6 @@
 {
   "name": "nouners-farcaster",
-  "version": "1.0.0-alpha.20",
+  "version": "1.0.0-alpha.21",
   "private": true,
   "description": "",
   "type": "module",
@@ -23,6 +23,7 @@
     "graphql": "16.10.0",
     "graphql-request": "6.1.0",
     "luxon": "3.5.0",
+    "pino": "9.6.0",
     "remeda": "2.19.2",
     "type-fest": "4.33.0",
     "unicorn-magic": "0.3.0",

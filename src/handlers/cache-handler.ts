@@ -3,173 +3,210 @@ import { fetchAccounts } from '@/services/nouns/fetch-accounts'
 import { fetchDelegates } from '@/services/nouns/fetch-delegates'
 import { fetchVoters } from '@/services/nouns/fetch-voters'
 import { getUserByVerification } from '@/services/warpcast/get-user-by-verification'
+import { logger } from '@/utilities/logger'
 import { DateTime } from 'luxon'
 import { map, pipe, sortBy, unique } from 'remeda'
 
 const expirationTtl = 60 * 60 * 24
 
 /**
- * Retrieves the holder's addresses from the provided environment's KV store.
- * If not found, fetches the accounts and extracts the addresses, then stores them in the KV store.
- * @param env - The environment object containing the KV store and other configurations.
- * @returns A promise that resolves to an array of holder's addresses.
+ * Fetches the holder addresses from the KV storage or, if not available,
+ * from the accounts list, and stores them in the KV storage.
+ * @param env - The environment object containing the KV storage.
+ * @returns - A promise that resolves to an array of holder addresses.
  */
-async function fetchHolderAddresses(env: Env) {
+async function fetchHolderAddresses(env: Env): Promise<string[]> {
   const { KV: kv } = env
   const cacheKey = 'nouns-holders-addresses'
 
-  let holdersAddresses: string[] =
-    (await kv.get(cacheKey, { type: 'json' })) ?? []
+  logger.info('Loading holder addresses from KV...')
+  let holdersAddresses =
+    (await kv.get<string[] | null>(cacheKey, { type: 'json' })) ?? []
 
   if (holdersAddresses.length > 0) {
+    logger.debug(
+      { addresses: holdersAddresses },
+      'Holder addresses loaded from KV.',
+    )
     return holdersAddresses
   }
 
+  logger.info('Fetching holder addresses from API...')
   const { accounts } = await fetchAccounts(env)
-  holdersAddresses = pipe(
-    accounts,
-    map((account) => account.id),
-  )
+  holdersAddresses = accounts.map((account) => account.id)
 
-  await kv.put(cacheKey, JSON.stringify(holdersAddresses), {
-    expirationTtl,
-  })
+  logger.debug(
+    { addresses: holdersAddresses },
+    'Fetched holder addresses from API.',
+  )
+  await kv.put(cacheKey, JSON.stringify(holdersAddresses), { expirationTtl })
 
   return holdersAddresses
 }
 
 /**
- * Retrieves the delegates' addresses from the KV store. If the addresses are not available in the KV store,
- * it fetches the latest delegate addresses, stores them in the KV store, and then returns them.
- * @param env - The environment object containing references to external resources like the KV store.
- * @returns - A promise that resolves to an array of delegate addresses.
+ * Fetches delegate addresses from the KVNamespace.
+ * If addresses are not available, fetches them from an external environment
+ * and stores them in the KVNamespace.
+ * @param env - The environment configuration used to fetch delegate data.
+ * @returns A promise that resolves to an array of delegate addresses.
  */
-async function fetchDelegateAddresses(env: Env) {
+async function fetchDelegateAddresses(env: Env): Promise<string[]> {
   const { KV: kv } = env
   const cacheKey = 'nouns-delegates-addresses'
 
+  logger.info('Loading delegate addresses from KV...')
   let delegatesAddresses: string[] =
-    (await kv.get(cacheKey, { type: 'json' })) ?? []
+    (await kv.get<string[] | null>(cacheKey, { type: 'json' })) ?? []
 
   if (delegatesAddresses.length > 0) {
+    logger.debug(
+      { addresses: delegatesAddresses },
+      'Delegate addresses found in KV.',
+    )
     return delegatesAddresses
   }
 
+  logger.info('Fetching delegate addresses from API...')
   const { delegates } = await fetchDelegates(env)
-  delegatesAddresses = pipe(
-    delegates,
-    map((account) => account.id),
-  )
+  delegatesAddresses = delegates.map((delegate) => delegate.id)
 
-  await kv.put(cacheKey, JSON.stringify(delegatesAddresses), {
-    expirationTtl,
-  })
+  logger.debug(
+    { addresses: delegatesAddresses },
+    'Fetched delegate addresses from API.',
+  )
+  await kv.put(cacheKey, JSON.stringify(delegatesAddresses), { expirationTtl })
 
   return delegatesAddresses
 }
 
 /**
- * Fetches the Farcaster users associated with holder and delegate addresses
- * and stores them to the given environment's KV storage.
- * @param env - The environment object containing the KV storage and necessary configurations.
- * @returns - A promise that resolves when the fetch and store operation is complete.
+ * Fetches and stores Farcaster users into a Key-Value store.
+ *
+ * This method retrieves the addresses of holders and delegates,
+ * fetches the corresponding Farcaster user data, and stores the
+ * unique and sorted list of user FIDs in a Key-Value store.
+ * @param env - The environment object containing necessary configurations and KV store.
+ * @returns A promise that resolves when the process is complete.
  */
-async function fetchAndStoreFarcasterUsers(env: Env) {
+async function fetchAndStoreFarcasterUsers(env: Env): Promise<void> {
   const { KV: kv } = env
   const cacheKey = 'nouns-farcaster-users'
 
-  const holdersAddresses = await fetchHolderAddresses(env)
-
-  const delegatesAddresses = await fetchDelegateAddresses(env)
-
+  logger.info('Loading Farcaster users from KV...')
   let farcasterUsers: number[] =
-    (await kv.get(cacheKey, { type: 'json' })) ?? []
+    (await kv.get<number[] | null>(cacheKey, { type: 'json' })) ?? []
 
   if (farcasterUsers.length > 0) {
+    logger.debug({ users: farcasterUsers }, 'Farcaster users already cached.')
     return
   }
 
+  logger.info('Fetching Farcaster users from API...')
+  const holdersAddresses = await fetchHolderAddresses(env)
+  const delegatesAddresses = await fetchDelegateAddresses(env)
+
   const addresses = pipe([...holdersAddresses, ...delegatesAddresses], unique())
+
   for (const address of addresses) {
     try {
+      logger.debug({ address }, 'Fetching Farcaster user for address.')
       const { user } = await getUserByVerification(env, address)
       farcasterUsers = pipe(
         [...farcasterUsers, user.fid],
         unique(),
         sortBy((fid) => fid),
       )
+      logger.debug({ fid: user.fid, address }, 'Farcaster user fetched.')
     } catch (error) {
       if (
         error instanceof Error &&
         !error.message.startsWith('No FID has connected')
       ) {
-        console.error(`An error occurred: ${error.message}`)
+        logger.error({ error }, 'Error fetching Farcaster user.')
       }
     }
   }
 
-  await kv.put(cacheKey, JSON.stringify(farcasterUsers), {
-    expirationTtl,
-  })
+  logger.debug(
+    { users: farcasterUsers },
+    'Fetched and processed Farcaster users.',
+  )
+  await kv.put(cacheKey, JSON.stringify(farcasterUsers), { expirationTtl })
 }
 
 /**
- * Fetches Farcaster voters, stores their addresses, and updates the list of Farcaster IDs in a KV store.
- * @param env - The environment object containing the key-value store.
+ * Fetches and stores Farcaster voters' addresses and FIDs
+ * (Farcaster IDs) in the given key-value store.
+ * @param env - The environment object containing configuration and KV store.
+ * @returns A Promise that resolves when the operation is completed.
  */
 async function fetchAndStoreFarcasterVoters(env: Env) {
   const { KV: kv } = env
   const cacheKey = 'nouns-farcaster-voters'
 
+  logger.info('Loading Farcaster voters from KV...')
   let farcasterVoters: number[] =
-    (await kv.get(cacheKey, { type: 'json' })) ?? []
+    (await kv.get<number[] | null>(cacheKey, { type: 'json' })) ?? []
 
   if (farcasterVoters.length > 0) {
+    logger.debug(
+      { voters: farcasterVoters },
+      'Farcaster voters already cached.',
+    )
     return
   }
 
   const now = DateTime.now()
   const blockTimeInSeconds = 12
-  const threeMonthsAgo = now.minus({ months: 3 })
-  const secondsInThreeMonths = now.diff(threeMonthsAgo, 'seconds').seconds
+  const threeYearsAgo = now.minus({ years: 3 })
+  const secondsInThreeMonths = now.diff(threeYearsAgo, 'seconds').seconds
   const blocksInThreeMonths = secondsInThreeMonths / blockTimeInSeconds
   const startBlock = (await getBlockNumber(env)) - blocksInThreeMonths
 
+  logger.info('Fetching Farcaster voters from API...')
   const { voters } = await fetchVoters(env, startBlock)
-  const votersAddresses: string[] = pipe(
+  const addresses = pipe(
     voters,
     map((voter) => voter.id),
   )
 
-  for (const address of votersAddresses) {
+  for (const address of addresses) {
     try {
+      logger.debug({ address }, 'Fetching Farcaster user for voter address.')
       const { user } = await getUserByVerification(env, address)
       farcasterVoters = pipe(
         [...farcasterVoters, user.fid],
         unique(),
         sortBy((fid) => fid),
       )
+      logger.debug(
+        { fid: user.fid, address },
+        'Farcaster user fetched for voter.',
+      )
     } catch (error) {
       if (
         error instanceof Error &&
         !error.message.startsWith('No FID has connected')
       ) {
-        console.error(`An error occurred: ${error.message}`)
+        logger.error({ error }, 'Error fetching Farcaster voter.')
       }
     }
   }
 
-  await kv.put(cacheKey, JSON.stringify(farcasterVoters), {
-    expirationTtl,
-  })
+  logger.debug(
+    { voters: farcasterVoters },
+    'Fetched and processed Farcaster voters.',
+  )
+  await kv.put(cacheKey, JSON.stringify(farcasterVoters), { expirationTtl })
 }
 
 /**
- * Handles caching of data for Nouns application.
+ * Handles caching of data for LilNouns application.
  * @param env - The environment object containing KV storage.
  * @returns - A promise that resolves when caching is complete.
  */
-export async function cacheHandler(env: Env) {
+export async function cacheHandler(env: Env): Promise<void> {
   await Promise.all([
     fetchAndStoreFarcasterUsers(env),
     fetchAndStoreFarcasterVoters(env),
