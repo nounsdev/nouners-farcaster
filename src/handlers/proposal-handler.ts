@@ -31,7 +31,7 @@ function toRelativeTime(timestamp: number): string {
 }
 
 /**
- * Handles the proposal by retrieving or fetching delegates from KV store and logging them.
+ * Handles the proposal by retrieving or fetching voters from KV store and logging them.
  * @param env - The environment object.
  * @returns - A promise that resolves once the proposal is handled.
  */
@@ -41,22 +41,22 @@ export async function proposalHandler(env: Env) {
   logger.info('Fetching current user data...')
   const { user } = await getMe(env)
 
-  logger.info('Fetching Farcaster users and subscribers from KV...')
+  logger.info('Fetching Farcaster users and voters from KV...')
   const farcasterUsers =
     (await kv.get<number[] | null>('nouns-farcaster-users', {
       type: 'json',
     })) ?? []
-  const farcasterSubscribers =
-    (await kv.get<number[] | null>('nouns-farcaster-subscribers', {
+  const farcasterVoters =
+    (await kv.get<number[] | null>('nouns-farcaster-voters', {
       type: 'json',
     })) ?? []
 
   logger.info(
     {
       farcasterUsersCount: farcasterUsers.length,
-      farcasterSubscribersCount: farcasterSubscribers.length,
+      farcasterVotersCount: farcasterVoters.length,
     },
-    'Fetched Farcaster users and subscribers.',
+    'Fetched Farcaster users and voters.',
   )
 
   logger.info('Fetching current block number...')
@@ -145,7 +145,7 @@ export async function proposalHandler(env: Env) {
       "You received this message because you haven't voted yet. Don't miss out, cast your vote now! 🌟"
     const idempotencyKey = createHash('sha256').update(message).digest('hex')
 
-    for (const recipientFid of farcasterSubscribers) {
+    for (const recipientFid of farcasterVoters) {
       if (
         recipientFid === user.fid ||
         voters.includes(recipientFid) ||
