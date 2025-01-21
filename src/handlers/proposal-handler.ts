@@ -1,12 +1,13 @@
 import { getBlockNumber } from '@/services/ethereum/get-block-number'
 import { getBlockTimestamp } from '@/services/ethereum/get-block-timestamp'
 import { getProposals } from '@/services/nouns/get-proposals'
+import { getFollowers } from '@/services/warpcast/get-followers'
 import { getMe } from '@/services/warpcast/get-me'
 import { getUserByVerification } from '@/services/warpcast/get-user-by-verification'
 import { logger } from '@/utilities/logger'
 import { DateTime } from 'luxon'
 import { createHash } from 'node:crypto'
-import { filter, isTruthy } from 'remeda'
+import { filter, isTruthy, map, pipe } from 'remeda'
 
 interface DirectCastBody {
   type: 'direct-cast'
@@ -77,6 +78,16 @@ export async function proposalHandler(env: Env) {
 
   const batch: MessageSendRequest<DirectCastBody>[] = []
 
+  const { users: followers } = await getFollowers(env, user.fid);
+  const followersFids  = pipe(followers, map(user => user.fid))
+  logger.info(
+    {
+      followersFidsCount: followersFids.length,
+      followersFids,
+    },
+    'Fetched followers FIDs.',
+  )
+
   for (const proposal of proposals) {
     const { votes, endBlock, startBlock, id } = proposal
 
@@ -123,7 +134,7 @@ export async function proposalHandler(env: Env) {
     )
 
     const message =
-      "🗳️ It's voting time, Lil Nouns fam! Proposal #" +
+      "🗳️ It's voting time, Nouns fam! Proposal #" +
       id.toString() +
       ' is live and ready for your voice. ' +
       'Voting started ' +
@@ -138,11 +149,12 @@ export async function proposalHandler(env: Env) {
       if (
         recipientFid === user.fid ||
         voters.includes(recipientFid) ||
-        !farcasterUsers.includes(recipientFid)
+        !farcasterUsers.includes(recipientFid) ||
+        !followersFids.includes(recipientFid)
       ) {
         logger.debug(
           { fid: recipientFid },
-          'Skipping user as they have already voted or are the current user.',
+          'Skipping user as they have already voted or are the current user or not a follower.',
         )
         continue
       }
