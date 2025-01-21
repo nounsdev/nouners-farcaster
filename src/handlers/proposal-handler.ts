@@ -78,8 +78,11 @@ export async function proposalHandler(env: Env) {
 
   const batch: MessageSendRequest<DirectCastBody>[] = []
 
-  const { users: followers } = await getFollowers(env, user.fid);
-  const followersFids  = pipe(followers, map(user => user.fid))
+  const { users: followers } = await getFollowers(env, user.fid)
+  const followersFids = pipe(
+    followers,
+    map((user) => user.fid),
+  )
   logger.info(
     {
       followersFidsCount: followersFids.length,
@@ -146,15 +149,34 @@ export async function proposalHandler(env: Env) {
     const idempotencyKey = createHash('sha256').update(message).digest('hex')
 
     for (const recipientFid of farcasterVoters) {
-      if (
-        recipientFid === user.fid ||
-        voters.includes(recipientFid) ||
-        !farcasterUsers.includes(recipientFid) ||
-        !followersFids.includes(recipientFid)
-      ) {
+      if (recipientFid === user.fid) {
         logger.debug(
           { fid: recipientFid },
-          'Skipping user as they have already voted or are the current user or not a follower.',
+          'Skipping user: recipient is the current user.',
+        )
+        continue
+      }
+
+      if (!followersFids.includes(recipientFid)) {
+        logger.debug(
+          { fid: recipientFid },
+          'Skipping user: recipient is not a follower.',
+        )
+        continue
+      }
+
+      if (voters.includes(recipientFid)) {
+        logger.debug(
+          { fid: recipientFid },
+          'Skipping user: recipient has already voted.',
+        )
+        continue
+      }
+
+      if (!farcasterUsers.includes(recipientFid)) {
+        logger.debug(
+          { fid: recipientFid },
+          'Skipping user: recipient is not a Farcaster user.',
         )
         continue
       }
