@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.22] - 2025-01-21
+
+### 🚜 Refactor
+
+- *(queue-handler)* Replace `console` with `logger`
+- *(channel-handler)* Replace `logDebug` with `logger`
+- *(scheduled-handler)* Replace `console.log` with `logger.info`
+
 ## [1.0.0-alpha.21] - 2025-01-21
 
 ### 🚀 Features
