@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.20] - 2025-01-21
+
+### ⚙️ Miscellaneous Tasks
+
+- *(config)* Set `workers_dev` to false in `wrangler.toml`
+
 ## [1.0.0-alpha.19] - 2025-01-21
 
 ### ⚙️ Miscellaneous Tasks
