@@ -1,5 +1,6 @@
 import { cacheHandler } from '@/handlers/cache-handler'
 import { channelHandler } from '@/handlers/channel-handler'
+import { proposalHandler } from '@/handlers/proposal-handler'
 import { CronTime } from 'cron-time-generator'
 
 /**
@@ -16,6 +17,9 @@ export async function scheduledHandler(
     case CronTime.everyHour():
       await cacheHandler(env)
       await channelHandler(env)
+      break
+    case CronTime.everyDayAt(14, 0):
+      await proposalHandler(env)
       break
     default:
       console.log(`No handler for the cron schedule: ${controller.cron}`)
