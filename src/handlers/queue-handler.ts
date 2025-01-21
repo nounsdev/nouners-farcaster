@@ -44,9 +44,9 @@ async function handleLikeTask(env: Env, data: ReactionBody['data']) {
   try {
     const result = await likeCast(env, hash)
 
-    console.log(`Like applied successfully to cast:`, result)
+    logger.info({ hash, result }, 'Like applied successfully to cast.')
   } catch (error) {
-    console.error(`Failed to apply like to cast ${hash}:`, error)
+    logger.error({ hash, error }, 'Failed to apply like to cast.')
     throw error
   }
 }
@@ -63,9 +63,9 @@ async function handleRecastTask(env: Env, data: ReactionBody['data']) {
   try {
     const result = await recast(env, hash)
 
-    console.log(`Recast applied successfully to cast:`, result)
+    logger.info({ hash, result }, 'Recast applied successfully to cast.')
   } catch (error) {
-    console.error(`Failed to apply recast to cast ${hash}:`, error)
+    logger.error({ hash, error }, 'Failed to apply recast to cast.')
     throw error
   }
 }
@@ -122,7 +122,7 @@ async function processMessage(env: Env, message: Message) {
       break
 
     default:
-      console.error('Unknown task type:', type)
+      logger.error('Unknown task type:', type)
   }
 }
 
