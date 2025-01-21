@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.18] - 2025-01-21
+
+### 🚜 Refactor
+
+- *(channel-handler)* Process batches in chunks
+
 ## [1.0.0-alpha.17] - 2025-01-21
 
 ### ⚙️ Miscellaneous Tasks

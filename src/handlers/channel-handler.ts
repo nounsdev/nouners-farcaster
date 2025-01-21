@@ -1,7 +1,7 @@
 import { getCastLikes } from '@/services/warpcast/get-cast-likes'
 import { getFeedItems } from '@/services/warpcast/get-feed-items'
 import { getMe } from '@/services/warpcast/get-me'
-import { map, pipe } from 'remeda'
+import { chunk, map, pipe } from 'remeda'
 
 interface ReactionBody {
   type: 'like' | 'recast'
@@ -143,8 +143,14 @@ export async function handleNounsChannel(env: Env) {
 
   if (batch.length > 0) {
     try {
-      await queue.sendBatch(batch)
-      logDebug('Batch enqueued successfully:', batch)
+      const batchSizeLimit = 100
+
+      const chunkedBatches = pipe(batch, chunk(batchSizeLimit))
+
+      for (const chunk of chunkedBatches) {
+        await queue.sendBatch(chunk)
+        logDebug('Chunk enqueued successfully:', chunk)
+      }
     } catch (error) {
       logDebug('Error enqueuing batch:', error)
     }
