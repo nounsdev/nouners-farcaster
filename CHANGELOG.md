@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.19] - 2025-01-21
+
+### ⚙️ Miscellaneous Tasks
+
+- *(workflows)* Remove deploy and publish workflow
+
 ## [1.0.0-alpha.18] - 2025-01-21
 
 ### 🚜 Refactor
