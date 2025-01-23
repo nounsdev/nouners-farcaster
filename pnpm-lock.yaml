@@ -41,8 +41,8 @@ importers:
         version: 2.22.11(typescript@5.7.3)(zod@3.24.1)
     devDependencies:
       '@cloudflare/vitest-pool-workers':
-        specifier: 0.6.4
-        version: 0.6.4(@cloudflare/workers-types@4.20250121.0)(@vitest/runner@2.1.8)(@vitest/snapshot@2.1.8)(vitest@2.1.8(@types/node@22.10.7))
+        specifier: 0.6.6
+        version: 0.6.6(@cloudflare/workers-types@4.20250121.0)(@vitest/runner@2.1.8)(@vitest/snapshot@2.1.8)(vitest@2.1.8(@types/node@22.10.7))
       '@cloudflare/workers-types':
         specifier: 4.20250121.0
         version: 4.20250121.0
@@ -140,8 +140,8 @@ packages:
     resolution: {integrity: sha512-YLPHc8yASwjNkmcDMQMY35yiWjoKAKnhUbPRszBRS0YgH+IXtsMp61j+yTcnCE3oO2DgP0U3iejLC8FTtKDC8Q==}
     engines: {node: '>=16.13'}
 
-  '@cloudflare/vitest-pool-workers@0.6.4':
-    resolution: {integrity: sha512-/S875Em7P3jRZASOmE2sCu7lLnYlGXKNkreo71M+SyYb+Vlh2SD8LqTmDydYDe2aRLQtyCcAZWJUzs7ymeDZ3Q==}
+  '@cloudflare/vitest-pool-workers@0.6.6':
+    resolution: {integrity: sha512-tDWSjtbOrnT1/ekSofM4qq3EWpXBg4b1s8H8h6F5mxlAVrTICIDfnygi1IsDROQ6/jfnXz7XGqhdyJe9TB1OXQ==}
     peerDependencies:
       '@vitest/runner': 2.0.x - 2.1.x
       '@vitest/snapshot': 2.0.x - 2.1.x
@@ -2137,6 +2137,9 @@ packages:
   unenv-nightly@2.0.0-20250109-100802-88ad671:
     resolution: {integrity: sha512-Uij6gODNNNNsNBoDlnaMvZI99I6YlVJLRfYH8AOLMlbFrW7k2w872v9VLuIdch2vF8QBeSC4EftIh5sG4ibzdA==}
 
+  unenv@2.0.0-rc.0:
+    resolution: {integrity: sha512-H0kl2w8jFL/FAk0xvjVing4bS3jd//mbg1QChDnn58l9Sc5RtduaKmLAL8n+eBw5jJo8ZjYV7CrEGage5LAOZQ==}
+
   unicorn-magic@0.3.0:
     resolution: {integrity: sha512-+QBBXBCvifc56fsbuxZQ6Sic3wqqc3WWaqxs58gvJrcOuN83HGTCwz3oS5phzU9LthRNE9VrJCFCLUgHeeFnfA==}
     engines: {node: '>=18'}
@@ -2260,6 +2263,16 @@ packages:
       '@cloudflare/workers-types':
         optional: true
 
+  wrangler@3.105.0:
+    resolution: {integrity: sha512-NX10iuUXtgiVRG9YJ7dwwEUuhQ38hu4stcxMWq4dbKCnfcOj7fLFh+HwaWudqOr1jDCPrnSOQVkgfAfG3ZH9Lw==}
+    engines: {node: '>=16.17.0'}
+    hasBin: true
+    peerDependencies:
+      '@cloudflare/workers-types': ^4.20241230.0
+    peerDependenciesMeta:
+      '@cloudflare/workers-types':
+        optional: true
+
   wrap-ansi@9.0.0:
     resolution: {integrity: sha512-G8ura3S+3Z2G+mkgNRq8dqaFZAuxfsxpBB8OCTGRTCtp+l/v9nbFNmCUP1BZMts3G1142MsZfn6eeUKrr4PD1Q==}
     engines: {node: '>=18'}
@@ -2313,7 +2326,7 @@ snapshots:
     dependencies:
       mime: 3.0.0
 
-  '@cloudflare/vitest-pool-workers@0.6.4(@cloudflare/workers-types@4.20250121.0)(@vitest/runner@2.1.8)(@vitest/snapshot@2.1.8)(vitest@2.1.8(@types/node@22.10.7))':
+  '@cloudflare/vitest-pool-workers@0.6.6(@cloudflare/workers-types@4.20250121.0)(@vitest/runner@2.1.8)(@vitest/snapshot@2.1.8)(vitest@2.1.8(@types/node@22.10.7))':
     dependencies:
       '@vitest/runner': 2.1.8
       '@vitest/snapshot': 2.1.8
@@ -2324,7 +2337,7 @@ snapshots:
       miniflare: 3.20241230.2
       semver: 7.6.3
       vitest: 2.1.8(@types/node@22.10.7)
-      wrangler: 3.103.2(@cloudflare/workers-types@4.20250121.0)
+      wrangler: 3.105.0(@cloudflare/workers-types@4.20250121.0)
       zod: 3.24.1
     transitivePeerDependencies:
       - '@cloudflare/workers-types'
@@ -4252,6 +4265,14 @@ snapshots:
       pathe: 1.1.2
       ufo: 1.5.4
 
+  unenv@2.0.0-rc.0:
+    dependencies:
+      defu: 6.1.4
+      mlly: 1.7.4
+      ohash: 1.1.4
+      pathe: 1.1.2
+      ufo: 1.5.4
+
   unicorn-magic@0.3.0: {}
 
   unist-util-stringify-position@4.0.0:
@@ -4388,6 +4409,25 @@ snapshots:
       miniflare: 3.20241230.2
       path-to-regexp: 6.3.0
       unenv: unenv-nightly@2.0.0-20250109-100802-88ad671
+      workerd: 1.20241230.0
+    optionalDependencies:
+      '@cloudflare/workers-types': 4.20250121.0
+      fsevents: 2.3.3
+    transitivePeerDependencies:
+      - bufferutil
+      - supports-color
+      - utf-8-validate
+
+  wrangler@3.105.0(@cloudflare/workers-types@4.20250121.0):
+    dependencies:
+      '@cloudflare/kv-asset-handler': 0.3.4
+      '@esbuild-plugins/node-globals-polyfill': 0.2.3(esbuild@0.17.19)
+      '@esbuild-plugins/node-modules-polyfill': 0.2.2(esbuild@0.17.19)
+      blake3-wasm: 2.1.5
+      esbuild: 0.17.19
+      miniflare: 3.20241230.2
+      path-to-regexp: 6.3.0
+      unenv: 2.0.0-rc.0
       workerd: 1.20241230.0
     optionalDependencies:
       '@cloudflare/workers-types': 4.20250121.0
