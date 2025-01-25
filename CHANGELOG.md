@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.23] - 2025-01-25
+
+### 🚜 Refactor
+
+- *(logger)* Simplify logger configuration
+
 ## [1.0.0-alpha.22] - 2025-01-21
 
 ### 🚜 Refactor
