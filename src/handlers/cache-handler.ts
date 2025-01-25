@@ -159,8 +159,8 @@ async function fetchAndStoreFarcasterVoters(env: Env) {
 
   const now = DateTime.now()
   const blockTimeInSeconds = 12
-  const threeYearsAgo = now.minus({ years: 3 })
-  const secondsInThreeMonths = now.diff(threeYearsAgo, 'seconds').seconds
+  const threeMonthsAgo = now.minus({ months: 3 })
+  const secondsInThreeMonths = now.diff(threeMonthsAgo, 'seconds').seconds
   const blocksInThreeMonths = secondsInThreeMonths / blockTimeInSeconds
   const startBlock = (await getBlockNumber(env)) - blocksInThreeMonths
 
