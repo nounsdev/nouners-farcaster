@@ -2,6 +2,7 @@ import { cacheHandler } from '@/handlers/cache-handler'
 import { channelHandler } from '@/handlers/channel-handler'
 import { directCastsHandler } from '@/handlers/direct-casts-handler'
 import { proposalHandler } from '@/handlers/proposal-handler'
+import { starterPackHandler } from '@/handlers/starter-pack-handler'
 import { logger } from '@/utilities/logger'
 import { CronTime } from 'cron-time-generator'
 
@@ -25,6 +26,9 @@ export async function scheduledHandler(
       break
     case CronTime.everyDayAt(14, 0):
       await proposalHandler(env)
+      break
+    case CronTime.everyDay():
+      await starterPackHandler(env)
       break
     default:
       logger.info({ cron: controller.cron }, 'No handler for the cron schedule')
