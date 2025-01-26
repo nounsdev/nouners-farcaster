@@ -1,35 +1,41 @@
 import { getMe } from '@/services/warpcast/get-me'
-import { getStarterPackUsers } from '@/services/warpcast/get-starter-pack-users'
 import { getStarterPacks } from '@/services/warpcast/get-starter-packs'
+import { updateStarterPack } from '@/services/warpcast/update-starter-pack'
 import { logger } from '@/utilities/logger'
-import { filter, flatMap, map, pipe } from 'remeda'
+import { filter, first, pipe } from 'remeda'
 
 /**
  * @param env Environment configuration for the handler.
  */
 export async function starterPackHandler(env: Env) {
+  const { KV: kv } = env
+  const farcasterVoterKey = 'nouns-farcaster-voters'
+
+  const farcasterVoters =
+    (await kv.get<number[] | null>(farcasterVoterKey, { type: 'json' })) ?? []
+
   const { user } = await getMe(env)
   logger.debug({ user }, 'user')
 
   const { starterPacks } = await getStarterPacks(env, user.fid, 100)
-  logger.debug({ starterPacks }, 'starter packs')
 
-  const filteredStarterPacks = pipe(
+  const firstStarterPack = pipe(
     starterPacks,
     filter((pack) => pack.id.startsWith('Nouns-Radar')),
+    first(),
   )
-  logger.debug({ filteredStarterPacks }, 'filtered starter packs')
 
-  const users = await pipe(
-    filteredStarterPacks,
-    map(async (pack) => {
-      const { users } = await getStarterPackUsers(env, pack.id)
-      return users // Return users array for this pack
-    }),
-    async (promises) => {
-      const results = await Promise.all(promises) // Resolve all async operations
-      return flatMap(results, (users) => users) // Flatten the results into a single array
-    },
+  if (!firstStarterPack) {
+    logger.warn('No matching starter pack found')
+    return
+  }
+
+  const { success } = await updateStarterPack(
+    env,
+    firstStarterPack.id,
+    firstStarterPack.name,
+    firstStarterPack.description,
+    [...farcasterVoters, user.fid],
+    firstStarterPack.labels,
   )
-  logger.debug({ users }, 'all users')
 }
