@@ -15,8 +15,8 @@ export interface Pfp {
 
 export interface Bio {
   text: string
-  mentions: never[]
-  channelMentions: never[]
+  mentions: string[]
+  channelMentions: string[]
 }
 
 export interface Location {
