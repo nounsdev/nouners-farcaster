@@ -20,15 +20,13 @@ export async function scheduledHandler(
     case CronTime.everyHour():
       await cacheHandler(env)
       await channelHandler(env)
+      await starterPackHandler(env)
       break
     case CronTime.every(12).hours():
       await directCastsHandler(env)
       break
     case CronTime.everyDayAt(14, 0):
       await proposalHandler(env)
-      break
-    case CronTime.everyDay():
-      await starterPackHandler(env)
       break
     default:
       logger.info({ cron: controller.cron }, 'No handler for the cron schedule')
