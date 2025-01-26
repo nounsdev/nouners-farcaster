@@ -5,9 +5,11 @@ interface Env {
 	WARPCAST_BASE_URL: "https://client.warpcast.com";
 	NOUNS_SUBGRAPH_URL: "https://api.goldsky.com/api/public/project_cldf2o9pqagp43svvbk5u3kmo/subgraphs/nouns/prod/gn";
 	NEYNAR_API_URL: "https://api.neynar.com";
+	LOG_LEVEL: "debug";
 	WARPCAST_ACCESS_TOKEN: string;
 	WARPCAST_API_KEY: string;
 	ALCHEMY_API_KEY: string;
 	NEYNAR_API_KEY: string;
+	NODE_ENV: string;
 	QUEUE: Queue;
 }
