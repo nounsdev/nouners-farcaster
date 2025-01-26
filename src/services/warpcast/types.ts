@@ -15,8 +15,8 @@ export interface Pfp {
 
 export interface Bio {
   text: string
-  mentions: never[]
-  channelMentions: never[]
+  mentions: string[]
+  channelMentions: string[]
 }
 
 export interface Location {
@@ -31,6 +31,10 @@ export interface Profile {
 
 export interface ViewerContext {
   following: boolean
+  followedBy: boolean
+  canSendDirectCasts: boolean
+  enableNotifications: boolean
+  hasUploadedInboxKeys: boolean
 }
 
 export interface User {
@@ -42,6 +46,7 @@ export interface User {
   followerCount: number
   followingCount: number
   activeOnFcNetwork: boolean
+  connectedAccounts: string[]
   viewerContext: ViewerContext
 }
 
@@ -172,4 +177,15 @@ export interface Conversation {
     membersCanInvite: boolean
   }
   viewerContext: ViewerContext
+}
+
+export interface StarterPack {
+  id: string
+  creator: User
+  name: string
+  description: string
+  openGraphImageUrl: string
+  itemCount: number
+  items: User[]
+  labels: string[]
 }

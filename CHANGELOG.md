@@ -2,6 +2,38 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.25] - 2025-01-26
+
+### 🚀 Features
+
+- *(warpcast)* Add support for `PATCH` HTTP method
+- *(warpcast)* Add `getUserByFid` to fetch user by FID
+- *(warpcast)* Add `getUserByUsername` to fetch user data
+- *(warpcast)* Add `StarterPack` type definition
+- *(warpcast)* Extend `ViewerContext` with new properties
+- *(services)* Add `connectedAccounts` to user type
+- *(services)* Add `getStarterPacks` for fetching starter packs
+- *(warpcast)* Add `getStarterPackUsers` to fetch users list
+- *(handlers)* Add `starterPackHandler` for user management
+- *(handlers)* Add `starterPackHandler` to daily cron jobs
+- *(warpcast)* Add `createStarterPack` service function
+- *(warpcast)* Add `getStarterPack` method for starter pack details
+- *(warpcast)* Add `updateStarterPack` function
+- *(handler)* Enhance starter pack handling logic
+- *(handlers)* Add `starterPackHandler` to hourly cron schedule
+
+### 🐛 Bug Fixes
+
+- *(warpcast)* Update `Bio` interface types for mentions
+
+### 🚜 Refactor
+
+- *(handlers)* Modularize starter pack logic
+
+### ⚙️ Miscellaneous Tasks
+
+- *(worker)* Add `LOG_LEVEL` and `NODE_ENV` to configuration
+
 ## [1.0.0-alpha.24] - 2025-01-25
 
 ### 🐛 Bug Fixes
@@ -11,6 +43,10 @@ All notable changes to this project will be documented in this file.
 ### 🚜 Refactor
 
 - *(logger)* Enhance logger configuration
+
+### ⚙️ Miscellaneous Tasks
+
+- *(config)* Add `LOG_LEVEL` to wrangler config
 
 ## [1.0.0-alpha.23] - 2025-01-25
 
