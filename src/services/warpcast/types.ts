@@ -46,6 +46,7 @@ export interface User {
   followerCount: number
   followingCount: number
   activeOnFcNetwork: boolean
+  connectedAccounts: string[]
   viewerContext: ViewerContext
 }
 
