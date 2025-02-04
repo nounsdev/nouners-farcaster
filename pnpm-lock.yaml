@@ -37,8 +37,8 @@ importers:
         specifier: 0.3.0
         version: 0.3.0
       viem:
-        specifier: 2.22.17
-        version: 2.22.17(typescript@5.7.3)(zod@3.24.1)
+        specifier: 2.22.21
+        version: 2.22.21(typescript@5.7.3)(zod@3.24.1)
     devDependencies:
       '@cloudflare/vitest-pool-workers':
         specifier: 0.6.11
@@ -2147,8 +2147,8 @@ packages:
   validate-npm-package-license@3.0.4:
     resolution: {integrity: sha512-DpKm2Ui/xN7/HQKCtpZxoRWBhZ9Z0kqtygG8XCgNQ8ZlDnxuQmWhj566j8fN4Cu3/JmbhsDo7fcAJq4s9h27Ew==}
 
-  viem@2.22.17:
-    resolution: {integrity: sha512-eqNhlPGgRLR29XEVUT2uuaoEyMiaQZEKx63xT1py9OYsE+ZwlVgjnfrqbXad7Flg2iJ0Bs5Hh7o0FfRWUJGHvg==}
+  viem@2.22.21:
+    resolution: {integrity: sha512-CujapStF+F3VP+bKBQOGFk5YHyJKZOY2TGvD1e04CAm8VrtLo3sfTydYW2Rri6LMktqp6ilGB9GvSiZczxvOBQ==}
     peerDependencies:
       typescript: '>=5.0.4'
     peerDependenciesMeta:
@@ -4244,7 +4244,7 @@ snapshots:
       spdx-correct: 3.2.0
       spdx-expression-parse: 3.0.1
 
-  viem@2.22.17(typescript@5.7.3)(zod@3.24.1):
+  viem@2.22.21(typescript@5.7.3)(zod@3.24.1):
     dependencies:
       '@noble/curves': 1.8.1
       '@noble/hashes': 1.7.1
