@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.0-alpha.28] - 2025-02-20
+
+### ⚙️ Miscellaneous Tasks
+
+- *(env)* Add node version specification files
+
 ## [1.0.0-alpha.27] - 2025-01-26
 
 ### 🐛 Bug Fixes
